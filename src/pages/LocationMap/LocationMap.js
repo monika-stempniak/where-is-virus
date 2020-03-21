@@ -5,9 +5,44 @@ import {
   MarkerClusterer,
   Marker
 } from "@react-google-maps/api";
+import { Button, Box } from "@material-ui/core";
+import { styled } from "@material-ui/core/styles";
 
-import { Container } from "components";
+import { Container, Title } from "components";
 import { GOOGLE_MAPS_API_KEY, MARKERS } from "shared/constants";
+
+const ButtonContainer = styled(Box)({
+  marginTop: 20,
+  width: "1000px",
+  display: "flex"
+});
+
+const MapButton = styled(Button)({
+  background: "linear-gradient(45deg, #ff2d55 30%, #ffcc00 90%)",
+  border: 0,
+  borderRadius: 20,
+  boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
+  color: "white",
+  height: 48,
+  padding: "0 30px"
+});
+
+const NotificationButton = styled(MapButton)({
+  background: "#ffcc00",
+  marginRight: 20,
+  "&:hover": {
+    background: "#ffcc00",
+    opacity: 0.8
+  }
+});
+
+const ReportButton = styled(MapButton)({
+  background: "#ff2d55",
+  "&:hover": {
+    background: "#ff2d55",
+    opacity: 0.8
+  }
+});
 
 const mapContainerStyle = {
   height: "600px",
@@ -51,7 +86,10 @@ const LocationMap = () => {
   };
 
   return (
-    <Container>
+    <Container center>
+      <Title align="center" marginTop={20} marginBottom={40}>
+        Where is Virus?
+      </Title>
       <LoadScript id="script-loader" googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
         <GoogleMap
           id="marker-example"
@@ -74,6 +112,19 @@ const LocationMap = () => {
           </MarkerClusterer>
         </GoogleMap>
       </LoadScript>
+      <ButtonContainer>
+        <NotificationButton
+          type="submit"
+          color="primary"
+          disabled={false}
+          fullWidth
+        >
+          Notifications
+        </NotificationButton>
+        <ReportButton type="submit" color="primary" disabled={false} fullWidth>
+          Report Virus
+        </ReportButton>
+      </ButtonContainer>
     </Container>
   );
 };

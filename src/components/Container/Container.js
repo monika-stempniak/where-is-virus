@@ -5,14 +5,19 @@ import { Container } from "@material-ui/core";
 
 const useStyles = makeStyles(theme =>
   createStyles({
-    root: {
-      padding: theme.spacing(3, 0)
-    }
+    root: center => ({
+      padding: theme.spacing(3, 0),
+      ...(center && {
+        display: "Flex",
+        justifyContent: "center",
+        flexDirection: "column"
+      })
+    })
   })
 );
 
-const MainContainer = ({ children, className }) => {
-  const classes = useStyles();
+const MainContainer = ({ children, className, center }) => {
+  const classes = useStyles(center);
 
   return (
     <Container
