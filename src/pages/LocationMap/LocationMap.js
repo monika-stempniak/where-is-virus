@@ -8,8 +8,8 @@ import {
 import { Button, Box } from "@material-ui/core";
 import { styled } from "@material-ui/core/styles";
 
-import { Container, Title } from "components";
 import { GOOGLE_MAPS_API_KEY, MARKERS } from "shared/constants";
+import { Container, Title } from "components";
 
 const ButtonContainer = styled(Box)({
   marginTop: 20,
@@ -18,7 +18,6 @@ const ButtonContainer = styled(Box)({
 });
 
 const MapButton = styled(Button)({
-  background: "linear-gradient(45deg, #ff2d55 30%, #ffcc00 90%)",
   border: 0,
   borderRadius: 20,
   boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
@@ -64,7 +63,7 @@ const options = {
     "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m"
 };
 
-const LocationMap = () => {
+const LocationMap = props => {
   const [currentLatLng, setCurrentLatLng] = useState({ lat: 0, lng: 0 });
 
   useEffect(() => {
@@ -85,47 +84,48 @@ const LocationMap = () => {
     }
   };
 
+  const handleOpenReport = () => {
+    props.history.push("/report");
+  };
+
   return (
-    <Container center>
-      <Title align="center" marginTop={20} marginBottom={40}>
-        Where is Virus?
-      </Title>
-      <LoadScript id="script-loader" googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
-        <GoogleMap
-          id="marker-example"
-          mapContainerStyle={mapContainerStyle}
-          zoom={8}
-          center={currentLatLng}
-        >
-          <Marker position={currentLatLng} icon={MARKERS.CURRENT_USER} />
-          <MarkerClusterer options={options}>
-            {clusterer =>
-              locations.map((location, i) => (
-                <Marker
-                  key={i}
-                  position={location}
-                  clusterer={clusterer}
-                  icon={MARKERS.CONFIRMED}
-                />
-              ))
-            }
-          </MarkerClusterer>
-        </GoogleMap>
-      </LoadScript>
-      <ButtonContainer>
-        <NotificationButton
-          type="submit"
-          color="primary"
-          disabled={false}
-          fullWidth
-        >
-          Notifications
-        </NotificationButton>
-        <ReportButton type="submit" color="primary" disabled={false} fullWidth>
-          Report Virus
-        </ReportButton>
-      </ButtonContainer>
-    </Container>
+    <>
+      <Container center>
+        <Title align="center" marginTop={20} marginBottom={40}>
+          Where is Virus?
+        </Title>
+        <LoadScript id="script-loader" googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
+          <GoogleMap
+            id="marker-example"
+            mapContainerStyle={mapContainerStyle}
+            zoom={8}
+            center={currentLatLng}
+          >
+            <Marker position={currentLatLng} icon={MARKERS.CURRENT_USER} />
+            <MarkerClusterer options={options}>
+              {clusterer =>
+                locations.map((location, i) => (
+                  <Marker
+                    key={i}
+                    position={location}
+                    clusterer={clusterer}
+                    icon={MARKERS.CONFIRMED}
+                  />
+                ))
+              }
+            </MarkerClusterer>
+          </GoogleMap>
+        </LoadScript>
+        <ButtonContainer>
+          <NotificationButton disabled={false} fullWidth>
+            Notifications
+          </NotificationButton>
+          <ReportButton disabled={false} fullWidth onClick={handleOpenReport}>
+            Report Virus
+          </ReportButton>
+        </ButtonContainer>
+      </Container>
+    </>
   );
 };
 

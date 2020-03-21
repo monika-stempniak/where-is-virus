@@ -13,7 +13,7 @@ const styles = theme => ({
 });
 
 const FormButton = styled(Button)({
-  background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+  background: "linear-gradient(45deg, #ff2d55 30%, #ffcc00 90%)",
   border: 0,
   borderRadius: 20,
   boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
@@ -81,7 +81,7 @@ const Form = props => {
               disabled={isSubmitting}
               fullWidth
             >
-              SUBMIT
+              Submit
             </FormButton>
           </CardActions>
         </Card>
