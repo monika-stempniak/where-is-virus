@@ -17,7 +17,7 @@ const App = () => {
           <Redirect to="/signin" />
         </Route>
         <Route exact path="/signin" component={SignInForm} />
-        <Route exact path="/map" component={LocationMap} />
+        <Route exact path="/map" render={props => <LocationMap {...props} />} />
         <Route component={NotFound} />
       </Switch>
     </Router>

@@ -29,7 +29,13 @@ const MyButton = styled(Button)({
   padding: "0 30px"
 });
 
-const form = props => {
+const Form = props => {
+  const handleSubmitForm = async () => {
+    const { handleSubmit, history } = props;
+    await handleSubmit();
+    history.push("map");
+  };
+
   const {
     classes,
     values,
@@ -37,13 +43,12 @@ const form = props => {
     errors,
     isSubmitting,
     handleChange,
-    handleBlur,
-    handleSubmit
+    handleBlur
   } = props;
 
   return (
     <Container className={classes.container}>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmitForm}>
         <Title align="center" classes={{ root: classes.title }}>
           Where is Virus?
         </Title>
@@ -93,7 +98,10 @@ const form = props => {
 };
 
 const SignInForm = withFormik({
-  mapPropsToValues: ({ email, password }) => {
+  mapPropsToValues: (
+    // props,
+    { email = "test@test.com", password = "P@ssword" }
+  ) => {
     return {
       email: email || "",
       password: password || ""
@@ -116,6 +124,6 @@ const SignInForm = withFormik({
       setSubmitting(false);
     }, 1000);
   }
-})(form);
+})(Form);
 
 export default withStyles(styles)(SignInForm);
