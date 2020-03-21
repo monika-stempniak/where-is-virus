@@ -4,7 +4,8 @@ import { styled } from "@material-ui/core/styles";
 import { get } from "lodash";
 
 import { Container, Report } from "components";
-import { getAllEvents } from "api/eventsApi";
+import { getAllEvents, addEvent } from "api/eventsApi";
+import { getGeocodingData } from "api/geocodeApi";
 
 const backArrowIcon = require("../../assets/backArrow.png");
 
@@ -134,22 +135,60 @@ const ReportsList = ({ history }) => {
     );
   };
 
-  const goBack = () => {
+  const handleGoBack = () => {
     history.goBack();
+  };
+
+  const handleSortByLocation = () => {
+    alert("To be done...");
+  };
+
+  const handleSortByDate = () => {
+    alert("To be done...");
+  };
+
+  const handleAddNewEvent = async () => {
+    const exampleAddress = prompt(
+      "TEST: Please confirm or enter an example address:",
+      "Warszawa, ul. Kwiatowa 6"
+    );
+    const address = `address=${exampleAddress.trim().replace(/ /g, "+")}`;
+    const data = await getGeocodingData(address);
+    const location = data ? data.results[0].geometry.location : "";
+    const exampleEvent = {
+      occurrenceDate: new Date(),
+      hasIllnessSymptoms: true,
+      creationDate: new Date(),
+      lastUpdateDate: new Date(),
+      socialConfirmationCounter: 0,
+      description: "Starszy pan - ok 70 lat z napadami duszności",
+      longitude: location.lng,
+      latitude: location.lat,
+      confirmedBySanepid: false,
+      inQuarantine: true
+    };
+
+    const response = addEvent(exampleEvent);
+    // TODO:
+    typeof response === Object && fetchEvents();
   };
 
   return (
     <>
       <ReportContainer>
-        <BackArrowIconButton aria-label="back" size="small" onClick={goBack}>
+        <BackArrowIconButton
+          aria-label="back"
+          size="small"
+          onClick={handleGoBack}
+        >
           <img src={backArrowIcon} alt="back button" />
         </BackArrowIconButton>
         <SortButtonsContainer>
           <Typography>Sort by:</Typography>
-          <LocationButton disabled={false} variant="outlined">
+          <LocationButton variant="outlined" onClick={handleSortByLocation}>
             Closest Location
           </LocationButton>
-          <RecentDateButton disabled={false} variant="outlined">
+          <RecentDateButton variant="outlined" onClick={handleSortByDate}>
             Recent Date
           </RecentDateButton>
         </SortButtonsContainer>
@@ -160,7 +199,7 @@ const ReportsList = ({ history }) => {
       </ReportContainer>
       <AddReportContainer>
         <AddReportButtonContainer center>
-          <AddReportButton disabled={false} fullWidth>
+          <AddReportButton fullWidth onClick={handleAddNewEvent}>
             Add
           </AddReportButton>
         </AddReportButtonContainer>

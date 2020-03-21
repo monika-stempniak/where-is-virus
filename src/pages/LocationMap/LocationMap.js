@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   GoogleMap,
   LoadScript,
-  MarkerClusterer,
   Marker,
   InfoWindow
 } from "@react-google-maps/api";
@@ -119,19 +118,19 @@ const LocationMap = props => {
   };
 
   const handleMouseOver = async event => {
-    const latlng = `latlng=${event.longitude},${event.latitude}`;
-    const data = await getGeocodingData(latlng);
-    const location = data ? data.results[0].formatted_address : "";
-    const hoveredOverEvent = {
+    const selectedEvent = {
       ...event,
-      location,
       color: event.confirmedBySanepid ? "#ff2d55" : "#ffcc00"
     };
-    setActiveEvent(hoveredOverEvent);
+    setActiveEvent(selectedEvent);
   };
 
   const handleMouseOut = () => {
     setActiveEvent(null);
+  };
+
+  const handleNotifications = () => {
+    alert("To be done...");
   };
 
   return (
@@ -151,7 +150,7 @@ const LocationMap = props => {
             {events.map((event, i) => (
               <Marker
                 key={i}
-                position={{ lat: event.longitude, lng: event.latitude }}
+                position={{ lat: event.latitude, lng: event.longitude }}
                 icon={
                   event.confirmedBySanepid
                     ? MARKERS.CONFIRMED
@@ -164,8 +163,8 @@ const LocationMap = props => {
             {activeEvent && (
               <InfoWindowContainer
                 position={{
-                  lat: activeEvent.longitude,
-                  lng: activeEvent.latitude
+                  lat: activeEvent.latitude,
+                  lng: activeEvent.longitude
                 }}
               >
                 <InfoWindowContent>
@@ -175,7 +174,7 @@ const LocationMap = props => {
                       alt="Confirmed by SANEPID"
                     />
                   )}
-                  <Location>{activeEvent.location}</Location>
+                  <Location>{activeEvent.address}</Location>
                   <Description>{activeEvent.description}</Description>
                   <TestInfo textColor={activeEvent.color}>
                     {`Corona Virus Test:
@@ -187,7 +186,11 @@ const LocationMap = props => {
           </GoogleMap>
         </LoadScript>
         <ButtonContainer>
-          <NotificationButton disabled={false} fullWidth>
+          <NotificationButton
+            disabled={false}
+            fullWidth
+            onClick={handleNotifications}
+          >
             Notifications
           </NotificationButton>
           <ReportButton disabled={false} fullWidth onClick={handleOpenReport}>

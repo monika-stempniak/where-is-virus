@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { styled } from "@material-ui/core/styles";
-import { updateEvents } from "api/eventsApi";
+import { confirmEvent, deleteEvent } from "api/eventsApi";
 
 const MapButton = styled(Button)({
   border: 0,
@@ -74,33 +74,30 @@ const useStyles = makeStyles(theme =>
 
 const Report = ({
   getAllEvents,
-  event: { id, longitude, latitude, creationDate, description }
+  event: { id, longitude, latitude, address, creationDate, description }
 }) => {
   const classes = useStyles();
 
-  const confirmEvent = async () => {
-    await updateEvents({ id, confirmedBySanepid: true });
+  const handleConfirmEvent = async () => {
+    await confirmEvent({ longitude, latitude });
     getAllEvents();
   };
 
-  const deleteEvent = async () => {
-    // TODO:
-    console.log("event deleted");
-    // getAllEvents();
+  const handleDeleteEvent = async () => {
+    await deleteEvent(id);
+    getAllEvents();
   };
 
   return (
     <Card className={classes.root} variant="outlined">
       <CardContent>
-        <Location>
-          {longitude}, {latitude}
-        </Location>
+        <Location>{address}</Location>
         <DateTime>{creationDate}</DateTime>
         <Description>{description}</Description>
       </CardContent>
       <CardActions className={classes.buttons}>
-        <ConfirmButton onClick={confirmEvent}>Confirm</ConfirmButton>
-        <DeleteButton onClick={deleteEvent}>Delete</DeleteButton>
+        <ConfirmButton onClick={handleConfirmEvent}>Confirm</ConfirmButton>
+        <DeleteButton onClick={handleDeleteEvent}>Delete</DeleteButton>
       </CardActions>
     </Card>
   );
