@@ -126,7 +126,7 @@ const ReportsList = ({ history }) => {
     return (
       <>
         {events
-          .filter(event => !event.confirmedBySanepid)
+          .filter(event => event.latitude && !event.confirmedBySanepid)
           .map((event, i) => {
             return <Report key={i} event={event} getAllEvents={fetchEvents} />;
           })}

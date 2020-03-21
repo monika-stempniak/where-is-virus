@@ -3,15 +3,19 @@ import {
   GoogleMap,
   LoadScript,
   MarkerClusterer,
-  Marker
+  Marker,
+  InfoWindow
 } from "@react-google-maps/api";
 import { get } from "lodash";
-import { Button, Box } from "@material-ui/core";
-import { styled } from "@material-ui/core/styles";
+import { Button, Box, Typography } from "@material-ui/core";
+import styled from "styled-components";
 
-import { GOOGLE_MAPS_API_KEY, MARKERS } from "shared/constants";
+import { GOOGLE_MAPS, MARKERS } from "shared/constants";
 import { Container, Title } from "components";
 import { getAllEvents } from "api/eventsApi";
+import { getGeocodingData } from "api/geocodeApi";
+
+const confirmedIcon = require("../../assets/confirmed.png");
 
 const ButtonContainer = styled(Box)({
   marginTop: 20,
@@ -45,29 +49,45 @@ const ReportButton = styled(MapButton)({
   }
 });
 
+const Location = styled(Typography)({
+  fontWeight: "bold",
+  color: "#333333"
+});
+
+const Description = styled(Typography)({
+  color: "#999999",
+  fontSize: 12
+});
+
+const TestInfo = styled(Typography)(props => ({
+  color: props.textColor,
+  fontSize: 12,
+  paddingTop: 10
+}));
+
+const InfoWindowContainer = styled(InfoWindow)({
+  position: "relative"
+});
+
+const InfoWindowContent = styled.div(() => ({
+  padding: 10
+}));
+
+const ConfirmationIcon = styled.img(() => ({
+  position: "absolute",
+  top: 0,
+  right: 20
+}));
+
 const mapContainerStyle = {
   height: "600px",
   width: "1000px"
 };
 
-// const locations = [
-//   { lat: 52.237049, lng: 21.017532 },
-//   { lat: 51.7592, lng: 19.456 },
-//   { lat: 51.3753, lng: 20.2788 },
-//   { lat: 51.6176, lng: 20.5766 },
-//   { lat: 51.5312, lng: 20.0086 },
-//   { lat: 54.352, lng: 18.6466 },
-//   { lat: 54.5189, lng: 18.5305 }
-// ];
-
-const options = {
-  imagePath:
-    "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m"
-};
-
 const LocationMap = props => {
   const [currentLatLng, setCurrentLatLng] = useState({ lat: 0, lng: 0 });
   const [events, setEvents] = useState([]);
+  const [activeEvent, setActiveEvent] = useState(null);
 
   useEffect(() => {
     showCurrentLocation();
@@ -77,8 +97,8 @@ const LocationMap = props => {
   const fetchEvents = async () => {
     const data = await getAllEvents();
     const allEvents = get(data, "allEvents", []);
-    setEvents(allEvents);
-    console.log(allEvents);
+    const filteredEvents = allEvents.filter(event => !!event.longitude);
+    setEvents(filteredEvents);
   };
 
   const showCurrentLocation = () => {
@@ -98,13 +118,29 @@ const LocationMap = props => {
     props.history.push("/report");
   };
 
+  const handleMouseOver = async event => {
+    const latlng = `latlng=${event.longitude},${event.latitude}`;
+    const data = await getGeocodingData(latlng);
+    const location = data ? data.results[0].formatted_address : "";
+    const hoveredOverEvent = {
+      ...event,
+      location,
+      color: event.confirmedBySanepid ? "#ff2d55" : "#ffcc00"
+    };
+    setActiveEvent(hoveredOverEvent);
+  };
+
+  const handleMouseOut = () => {
+    setActiveEvent(null);
+  };
+
   return (
     <>
       <Container center>
         <Title align="center" marginTop={20} marginBottom={40}>
           Where is Virus?
         </Title>
-        <LoadScript id="script-loader" googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
+        <LoadScript id="script-loader" googleMapsApiKey={GOOGLE_MAPS.API_KEY}>
           <GoogleMap
             id="marker-example"
             mapContainerStyle={mapContainerStyle}
@@ -112,22 +148,42 @@ const LocationMap = props => {
             center={currentLatLng}
           >
             <Marker position={currentLatLng} icon={MARKERS.CURRENT_USER} />
-            <MarkerClusterer options={options}>
-              {clusterer =>
-                events.map(({ latitude, longitude, confirmedBySanepid }, i) => (
-                  <Marker
-                    key={i}
-                    position={{ lat: longitude, lng: latitude }}
-                    clusterer={clusterer}
-                    icon={
-                      confirmedBySanepid
-                        ? MARKERS.CONFIRMED
-                        : MARKERS.NOT_CONFIRMED
-                    }
-                  />
-                ))
-              }
-            </MarkerClusterer>
+            {events.map((event, i) => (
+              <Marker
+                key={i}
+                position={{ lat: event.longitude, lng: event.latitude }}
+                icon={
+                  event.confirmedBySanepid
+                    ? MARKERS.CONFIRMED
+                    : MARKERS.NOT_CONFIRMED
+                }
+                onMouseOver={() => handleMouseOver(event)}
+                onMouseOut={handleMouseOut}
+              />
+            ))}
+            {activeEvent && (
+              <InfoWindowContainer
+                position={{
+                  lat: activeEvent.longitude,
+                  lng: activeEvent.latitude
+                }}
+              >
+                <InfoWindowContent>
+                  {activeEvent.confirmedBySanepid && (
+                    <ConfirmationIcon
+                      src={confirmedIcon}
+                      alt="Confirmed by SANEPID"
+                    />
+                  )}
+                  <Location>{activeEvent.location}</Location>
+                  <Description>{activeEvent.description}</Description>
+                  <TestInfo textColor={activeEvent.color}>
+                    {`Corona Virus Test:
+                    ${activeEvent.confirmedBySanepid ? "YES" : "NO"}`}
+                  </TestInfo>
+                </InfoWindowContent>
+              </InfoWindowContainer>
+            )}
           </GoogleMap>
         </LoadScript>
         <ButtonContainer>
