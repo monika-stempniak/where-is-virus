@@ -1,7 +1,7 @@
 # todo-material-ui
 
-App for Health Department to record instances of coronavirus
+An app developed in React for the Department of Health to register CoronaVirus cases
 
-To start application clone repository and in the project directory run:
+To start application locally clone its repository and in the project directory run:
 
 ### `npm start`
