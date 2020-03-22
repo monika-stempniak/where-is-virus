@@ -5,7 +5,8 @@ export const GOOGLE_MAPS = {
 };
 
 export const MARKERS = {
-  CURRENT_USER: "http://maps.google.com/mapfiles/kml/paddle/grn-circle.png",
-  CONFIRMED: "http://maps.google.com/mapfiles/kml/paddle/red-circle.png",
-  NOT_CONFIRMED: "http://maps.google.com/mapfiles/kml/paddle/ylw-circle.png"
+  CURRENT_LOCATION: require("../assets/markers/currentLocation.png"),
+  VIRUS_LOCATION: require("../assets/markers/virusLocation.png"),
+  CONFIRMED: require("../assets/markers/confirmed.png"),
+  NOT_CONFIRMED: require("../assets/markers/notConfirmed.png")
 };

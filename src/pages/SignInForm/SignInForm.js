@@ -2,24 +2,46 @@ import React from "react";
 import { withFormik } from "formik";
 import * as Yup from "yup";
 import { Button, Card, CardContent, CardActions } from "@material-ui/core";
-import { withStyles, styled } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
+import styled from "styled-components";
+
 import { Container, Title, TextField } from "components";
+
+const logo = require("../../assets/logo.png");
 
 const styles = theme => ({
   card: {
     maxWidth: 420,
     marginTop: 50
+  },
+  form: {
+    margin: "0 auto"
   }
 });
 
+const LogoContainer = styled.div({
+  margin: "30px 0",
+  textAlign: "center"
+});
+
+const LogoIcon = styled.img({
+  width: "100px"
+});
+
 const FormButton = styled(Button)({
-  background: "linear-gradient(45deg, #ff2d55 30%, #ffcc00 90%)",
+  background: "#3796f4",
   border: 0,
   borderRadius: 20,
-  boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
+  boxShadow: "0px 12px 30px 0px rgba(55,150,244,0.2)",
   color: "white",
   height: 48,
-  padding: "0 30px"
+  padding: "0 30px",
+  "&:hover": {
+    border: 0,
+    background: "#3796f4",
+    color: "white",
+    opacity: 0.8
+  }
 });
 
 const Form = props => {
@@ -41,8 +63,11 @@ const Form = props => {
 
   return (
     <Container center>
-      <form onSubmit={handleSubmitForm}>
-        <Title align="center" marginTop={20} marginBottom={40}>
+      <form onSubmit={handleSubmitForm} className={classes.form}>
+        <LogoContainer>
+          <LogoIcon src={logo} alt="logo" />
+        </LogoContainer>
+        <Title variant="h2" align="center" marginTop={20} marginBottom={40}>
           Where is Virus?
         </Title>
         <Card className={classes.card}>
@@ -93,7 +118,7 @@ const Form = props => {
 const SignInForm = withFormik({
   mapPropsToValues: (
     // props,
-    { email = "test@test.com", password = "P@ssword" }
+    { email = "sanepid.waw@example.com", password = "pk1" }
   ) => {
     return {
       email: email || "",
@@ -106,14 +131,13 @@ const SignInForm = withFormik({
       .email("Enter a valid email")
       .required("Email is required"),
     password: Yup.string()
-      .min(8, "Password must contain at least 8 characters")
+      .min(3, "Password must contain at least 3 characters")
       .required("Enter your password")
   }),
 
   handleSubmit: (values, { setSubmitting }) => {
     setTimeout(() => {
-      // submit to the server
-      alert(JSON.stringify(values, null, 2));
+      // TODO: submit to the server
       setSubmitting(false);
     }, 1000);
   }

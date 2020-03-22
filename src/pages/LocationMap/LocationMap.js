@@ -12,9 +12,14 @@ import styled from "styled-components";
 import { GOOGLE_MAPS, MARKERS } from "shared/constants";
 import { Container, Title } from "components";
 import { getAllEvents } from "api/eventsApi";
-import { getGeocodingData } from "api/geocodeApi";
 
-const confirmedIcon = require("../../assets/confirmed.png");
+const checkedByHdIcon = require("../../assets/checkedByHD.png");
+
+const MapContainer = styled.div({
+  height: "600px",
+  width: "1000px",
+  background: "#c6c6c6"
+});
 
 const ButtonContainer = styled(Box)({
   marginTop: 20,
@@ -140,50 +145,55 @@ const LocationMap = props => {
           Where is Virus?
         </Title>
         <LoadScript id="script-loader" googleMapsApiKey={GOOGLE_MAPS.API_KEY}>
-          <GoogleMap
-            id="marker-example"
-            mapContainerStyle={mapContainerStyle}
-            zoom={8}
-            center={currentLatLng}
-          >
-            <Marker position={currentLatLng} icon={MARKERS.CURRENT_USER} />
-            {events.map((event, i) => (
+          <MapContainer>
+            <GoogleMap
+              id="marker-example"
+              mapContainerStyle={mapContainerStyle}
+              zoom={14}
+              center={currentLatLng}
+            >
               <Marker
-                key={i}
-                position={{ lat: event.latitude, lng: event.longitude }}
-                icon={
-                  event.confirmedBySanepid
-                    ? MARKERS.CONFIRMED
-                    : MARKERS.NOT_CONFIRMED
-                }
-                onMouseOver={() => handleMouseOver(event)}
-                onMouseOut={handleMouseOut}
+                position={currentLatLng}
+                icon={MARKERS.CURRENT_LOCATION}
               />
-            ))}
-            {activeEvent && (
-              <InfoWindowContainer
-                position={{
-                  lat: activeEvent.latitude,
-                  lng: activeEvent.longitude
-                }}
-              >
-                <InfoWindowContent>
-                  {activeEvent.confirmedBySanepid && (
-                    <ConfirmationIcon
-                      src={confirmedIcon}
-                      alt="Confirmed by SANEPID"
-                    />
-                  )}
-                  <Location>{activeEvent.address}</Location>
-                  <Description>{activeEvent.description}</Description>
-                  <TestInfo textColor={activeEvent.color}>
-                    {`Corona Virus Test:
+              {events.map((event, i) => (
+                <Marker
+                  key={i}
+                  position={{ lat: event.latitude, lng: event.longitude }}
+                  icon={
+                    event.confirmedBySanepid
+                      ? MARKERS.CONFIRMED
+                      : MARKERS.NOT_CONFIRMED
+                  }
+                  onMouseOver={() => handleMouseOver(event)}
+                  onMouseOut={handleMouseOut}
+                />
+              ))}
+              {activeEvent && (
+                <InfoWindowContainer
+                  position={{
+                    lat: activeEvent.latitude,
+                    lng: activeEvent.longitude
+                  }}
+                >
+                  <InfoWindowContent>
+                    {activeEvent.confirmedBySanepid && (
+                      <ConfirmationIcon
+                        src={checkedByHdIcon}
+                        alt="Confirmed by SANEPID"
+                      />
+                    )}
+                    <Location>{activeEvent.address}</Location>
+                    <Description>{activeEvent.description}</Description>
+                    <TestInfo textColor={activeEvent.color}>
+                      {`Corona Virus Test:
                     ${activeEvent.confirmedBySanepid ? "YES" : "NO"}`}
-                  </TestInfo>
-                </InfoWindowContent>
-              </InfoWindowContainer>
-            )}
-          </GoogleMap>
+                    </TestInfo>
+                  </InfoWindowContent>
+                </InfoWindowContainer>
+              )}
+            </GoogleMap>
+          </MapContainer>
         </LoadScript>
         <ButtonContainer>
           <NotificationButton

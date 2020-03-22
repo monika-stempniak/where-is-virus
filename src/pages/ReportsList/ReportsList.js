@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, IconButton, Typography, Box } from "@material-ui/core";
-import { styled } from "@material-ui/core/styles";
+import styled from "styled-components";
 import { get } from "lodash";
 
 import { Container, Report } from "components";
@@ -152,25 +152,27 @@ const ReportsList = ({ history }) => {
       "TEST: Please confirm or enter an example address:",
       "Warszawa, ul. Kwiatowa 6"
     );
-    const address = `address=${exampleAddress.trim().replace(/ /g, "+")}`;
-    const data = await getGeocodingData(address);
-    const location = data ? data.results[0].geometry.location : "";
-    const exampleEvent = {
-      occurrenceDate: new Date(),
-      hasIllnessSymptoms: true,
-      creationDate: new Date(),
-      lastUpdateDate: new Date(),
-      socialConfirmationCounter: 0,
-      description: "Starszy pan - ok 70 lat z napadami duszności",
-      longitude: location.lng,
-      latitude: location.lat,
-      confirmedBySanepid: false,
-      inQuarantine: true
-    };
+    if (exampleAddress) {
+      const address = `address=${exampleAddress.trim().replace(/ /g, "+")}`;
+      const data = await getGeocodingData(address);
+      const location = data ? data.results[0].geometry.location : "";
+      const exampleEvent = {
+        occurrenceDate: "2025-03-18T21:52:47",
+        hasIllnessSymptoms: true,
+        creationDate: "2025-03-18T21:52:47",
+        lastUpdateDate: "2025-03-18T21:52:47",
+        socialConfirmationCounter: 0,
+        description: "Starszy pan - ok 70 lat z napadami duszności",
+        longitude: location.lng,
+        latitude: location.lat,
+        confirmedBySanepid: false,
+        inQuarantine: true
+      };
 
-    const response = addEvent(exampleEvent);
-    // TODO:
-    typeof response === Object && fetchEvents();
+      const response = addEvent(exampleEvent);
+      // TODO:
+      typeof response === Object && fetchEvents();
+    }
   };
 
   return (
