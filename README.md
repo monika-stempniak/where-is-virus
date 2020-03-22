@@ -1,4 +1,4 @@
-# todo-material-ui
+# Where is Virus?
 
 An app developed in React for the Department of Health to register CoronaVirus cases
 
